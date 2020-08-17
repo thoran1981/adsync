@@ -7,18 +7,41 @@ public class baseballRecord {
 	private int hits;
 	private int atBats;
 	private double battingAverage;
+	int unInitializedNumber = -1;
 	
 	/**********************************************
 	 * No param constructor
 	 */
 	baseballRecord()
 	{
-		number = -1;
+		number = unInitializedNumber;
 		firstName = "";
 		lastName = "";
 		hits = 0;
 		atBats = 0;
-		battingAverage = 0.0;
+		setBA();
+	}
+	
+	/************************************************
+	 * Qualified constructor minus BA
+	 * 
+	 * @param inputNumber
+	 * @param inputFirstName
+	 * @param inputLastName
+	 * @param inputHits
+	 * @param inputAtBats
+	 */
+	baseballRecord(int inputNumber, String inputFirstName, 
+							String inputLastName, int inputHits,
+							int inputAtBats) 
+	{
+		number = inputNumber;
+		firstName = inputFirstName;
+		lastName = inputLastName;
+		hits = inputHits;
+		atBats = inputAtBats;
+		// Calculate BA based on hits and at-bats
+		setBA();
 	}
 
 	/************************************************
@@ -108,9 +131,17 @@ public class baseballRecord {
 	 */
 	public void setBA()
 	{
-		battingAverage = hits/atBats;
+		// if hits and atBats are both 0, avoid division by 0 failure 
+		if ((hits <= 0) && (atBats <= 0))
+		{
+			battingAverage = 0.0;
+		}
+		else
+		{
+			battingAverage = hits/atBats;
+		}
 		
-		// Batting averae can not be greater than 1.000
+		// Batting average can not be greater than 1.000
 		// Set average to 1.0 and hits equal to at-bats
 		if(battingAverage >= 1.0)
 		{
@@ -172,7 +203,8 @@ public class baseballRecord {
 	 */
 	public String toString()
 	{
-		return number + '\t' + firstName + '\t' + lastName + '\t' + hits + '\t'
-				+ atBats + '\t' + battingAverage;
+		return String.valueOf(number) + '\t' + firstName + "\t\t" + lastName + "\t\t" + 
+				String.valueOf(hits) + '\t'	+ String.valueOf(atBats) +
+				'\t' + String.valueOf(battingAverage);
 	}
 }

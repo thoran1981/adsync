@@ -1,1 +1,4 @@
-1,Finn,Horan,10,20,0.50
+2,Tim,Smith,1,10,0.0
+3,Mariah,Horan,7,10,0.0
+4,Mary,Horan,9,10,0.0
+5,Vince,Horan,10,10,1.0

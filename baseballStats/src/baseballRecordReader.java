@@ -6,7 +6,9 @@ import java.*;
 public class baseballRecordReader {
 	private static String baseballFileName;
 	private static String defaultFile = "C:\\Users\\Tim\\workspace\\baseballStats\\files\\baseballRecords.txt";
-	private static BufferedReader read;
+	//private static BufferedReader read;
+	private static Scanner scan;
+	private static String scanDelim = new String(",");
 	
 	/***********************************************************
 	 * No argument constructor
@@ -14,11 +16,18 @@ public class baseballRecordReader {
 	baseballRecordReader()
 	{
 		baseballFileName = new String(defaultFile);
-		String baseballFileNameTemp = new String(defaultFile + ".temp");
 		File inputFile = new File(baseballFileName);
-		File inputFileTemp = new File(baseballFileNameTemp);
-		FileReader inputFileReader;
 		
+		try {
+			scan = new Scanner(inputFile);
+		} catch (FileNotFoundException f)
+		{
+			System.err.println("Error.unable to load file - " + baseballFileName);
+		}
+		
+		scan.useDelimiter(scanDelim);
+		
+		/*
 		try{ 
 			if (!inputFile.exists()) {
 			   inputFile.createNewFile();
@@ -35,6 +44,7 @@ public class baseballRecordReader {
 		{
 			System.err.println("failed to open file - " + baseballFileName);
 		}
+		*/
 	}
 	
 	/****************************************************************
@@ -45,12 +55,22 @@ public class baseballRecordReader {
 	{
 		baseballFileName = new String(inputFileName);
 		File inputFile = new File(baseballFileName);
-		FileReader inputFileReader;
 		
+		try {
+			scan = new Scanner(inputFile);
+		} catch (FileNotFoundException f)
+		{
+			System.err.println("Error.unable to load file - " + baseballFileName);
+		}
+		
+		scan.useDelimiter(scanDelim);
+		
+		/*
 		try{ 
 			if (!inputFile.exists()) {
 			   inputFile.createNewFile();
 			}
+									
 			inputFileReader = new FileReader(inputFile);
 			read = new BufferedReader(inputFileReader);
 		} catch (FileNotFoundException e)
@@ -62,6 +82,7 @@ public class baseballRecordReader {
 		{
 			System.err.println("failed to open file - " + baseballFileName);
 		}
+		*/
 	}
 	
 	/*******************************************************
@@ -85,8 +106,10 @@ public class baseballRecordReader {
 	/******************************************************
 	 * Queries next line in the input file
 	 * 
-	 * ****BUG**** Can't get Scanner to work with Eclipse, 
+	 * 8/15/2020 - TPH - ****BUG**** Can't get Scanner to work with Eclipse, 
 	 * 	so currently BufferedReader is deleting records from file as it reads ******* 
+	 * 
+	 * 8/16/2020 - TPH - Updated code to replace BufferedReader with Scanner 
 	 * 
 	 * @return baseballRecord
 	 */
@@ -96,30 +119,44 @@ public class baseballRecordReader {
 		String nextRow = new String();
 		String [] playerMetrics;
 		
-		try{
-			if ((nextRow = read.readLine()) != null)
-			{
-				playerMetrics = nextRow.split(",");
-				result = new baseballRecord(Integer.parseInt(playerMetrics[0]), playerMetrics[1], playerMetrics[2], 
-						Integer.parseInt(playerMetrics[3]),Integer.parseInt(playerMetrics[4]), 
-						Double.parseDouble(playerMetrics[5]));
-			}
-		} catch (IOException e)
+		try {
+		if ((nextRow = scan.nextLine()) != null)
 		{
-			System.err.println("Failed to read next record from file");
+			playerMetrics = nextRow.split(",");
+			result = new baseballRecord(Integer.parseInt(playerMetrics[0]), playerMetrics[1], playerMetrics[2], 
+					Integer.parseInt(playerMetrics[3]),Integer.parseInt(playerMetrics[4]), 
+					Double.parseDouble(playerMetrics[5]));
 		}
-		
-			return result;
+		} catch(NoSuchElementException nse)
+		{
+		}
+
+		return result;
 	}
+	
 	/************************************************************
 	 * Print entire file one line at a time
 	 */
 	public void read()
 	{
 		baseballRecord nextRecord = new baseballRecord();
-
+		
+		// Reset Scanner
+		File inputFile = new File(baseballFileName);
+		
+		try {
+			scan = new Scanner(inputFile);
+		} catch (FileNotFoundException f)
+		{
+			System.err.println("Error.unable to load file - " + baseballFileName);
+		}
+		
+		scan.useDelimiter(scanDelim);
+		
 		//Print headers
-		System.out.println("Num\tFName\tLName\tHits\tAB\tAvg");
+		System.out.println("Num\tFName\t\tLName\t\tHits\tAB\tAvg");
+		
+		// While more records on file, print individually
 		nextRecord = this.readNextRecord();
 		while (nextRecord != null)
 		{
